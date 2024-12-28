@@ -87,9 +87,12 @@ class DataTransformation():
             target_feature_test_df = test_df[target_column_name]
 
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
+            # The fit(data) method is used to compute the mean and std dev for a given feature to be used further for scaling.
+            # The transform(data) method is used to perform scaling using mean and std dev calculated using the .fit() method.
+            # The fit_transform() method does both fits and transform.
             input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
-            train_arr=[
+            train_arr=np.c_[
                 input_feature_train_arr,np.array(target_feature_train_df)
             ]
             test_arr=np.c_[input_feature_test_arr,np.array(target_feature_test_df)]
@@ -103,7 +106,7 @@ class DataTransformation():
             return (
                 train_arr,
                 test_arr,
-                self.data_transformation_config.preprocessor_obj_file_path
+                self.data_transformation_config.preprocessor_obj_file_path,
             )
 
         except Exception as e:
