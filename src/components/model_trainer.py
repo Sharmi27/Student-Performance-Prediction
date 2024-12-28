@@ -11,12 +11,20 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
+# from xgboost import XGBRegressor
 
 from src.exception import CustomException
 from src.logger import logging
 
 from src.utils import save_object,evaluate_models
+from xgboost import XGBRegressor
+# from sklearn.base import BaseEstimator, RegressorMixin
+#
+#
+# class SklearnCompatibleXGBRegressor(XGBRegressor, BaseEstimator, RegressorMixin):
+#     def __sklearn_tags__(self):
+#         # Add tags to maintain compatibility with scikit-learn
+#         return {"multioutput": False, "requires_positive_y": False, "allow_nan": False}
 
 @dataclass
 class ModelTrainerConfig:
@@ -36,15 +44,15 @@ class ModelTrainer:
                 test_array[:,-1]
             )
             models={
-                "Linear Regression": LinearRegression(),
-                "K-Neighbors Regressor": KNeighborsRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
-                "Gradient Boosting":GradientBoostingRegressor(),
-                "Random Forest Regressor": RandomForestRegressor(),
+                "Random Forest": RandomForestRegressor(),
+                "Gradient Boosting": GradientBoostingRegressor(),
+                "Linear Regression": LinearRegression(),
                 "XGBRegressor": XGBRegressor(),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False),
-                "AdaBoost Regressor": AdaBoostRegressor()
+                "AdaBoost Regressor": AdaBoostRegressor(),
             }
+            # Hyper parameter tuning
             params = {
                 "Decision Tree": {
                     'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
@@ -84,7 +92,7 @@ class ModelTrainer:
             }
 
             #
-            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models)
+            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models,params=params)
 
         #     To get best model score from dict
             best_model_score=max(sorted(model_report.values()))
